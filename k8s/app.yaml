@@ -1,0 +1,53 @@
+# @format
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fastapi-redis-config
+data:
+  REDIS_HOST: "redis-svc.default.svc.cluster.local"
+  REDIS_PORT: "6379"
+  RABBITMQ_URL: "amqp://guest:guest@rabbitmq-svc.default.svc.cluster.local:5672/"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fastapi-redis-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: fastapi-redis
+  template:
+    metadata:
+      labels:
+        app: fastapi-redis
+    spec:
+      containers:
+        - name: fastapi-redis-app
+          image: docker.io/jahirraihan/fastapi-redis-app
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: fastapi-redis-config
+                  key: REDIS_HOST
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: fastapi-redis-config
+                  key: REDIS_PORT
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: fastapi-redis-service
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: fastapi-redis
