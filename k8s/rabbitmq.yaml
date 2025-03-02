@@ -1,125 +1,53 @@
-# @format
-
+apiVersion: v1
+kind: Service
+metadata:
+  name: rabbitmq-svc
+  namespace: mybrac-stg
+  labels:
+    app: rabbitmq-svc
+spec:
+  type: ClusterIP
+  ports:
+    - name: rabbitmq
+      port: 5672
+    - name: management
+      port: 15672
+  selector:
+    app: rabbitmq
+---
 apiVersion: apps/v1
 kind: StatefulSet
 metadata:
-  annotations:
-  name: redis
+  name: rabbitmq
   namespace: mybrac-stg
 spec:
-  minReadySeconds: 10
-  persistentVolumeClaimRetentionPolicy:
-    whenDeleted: Retain
-    whenScaled: Retain
-  podManagementPolicy: OrderedReady
+  serviceName: "rabbitmq"
   replicas: 1
-  revisionHistoryLimit: 10
   selector:
     matchLabels:
-      app: redis
-  serviceName: redis
+      app: rabbitmq
   template:
     metadata:
-      creationTimestamp: null
       labels:
-        app: redis
+        app: rabbitmq
     spec:
       containers:
-        - image: redis:6.0.5
-          imagePullPolicy: IfNotPresent
-          name: redis
+        - name: rabbitmq-test
+          image: rabbitmq:management-alpine
           ports:
-            - containerPort: 6379
-              name: redis
-              protocol: TCP
-          resources: {}
-          terminationMessagePath: /dev/termination-log
-          terminationMessagePolicy: File
-      dnsPolicy: ClusterFirst
-      restartPolicy: Always
-      schedulerName: default-scheduler
-      securityContext: {}
-      terminationGracePeriodSeconds: 10
-  updateStrategy:
-    rollingUpdate:
-      partition: 0
-    type: RollingUpdate
+            - name: rabbitmq
+              containerPort: 5672
+            - name: management 
+              containerPort: 15672 
+          env:
+            - name: RABBITMQ_DEFAULT_USER
+              value: ""
+            - name: RABBITMQ_DEFAULT_PASS
+              value: ""
+          volumeMounts:
+            - name: rabbitmq-data
+              mountPath: /var/lib/rabbitmq
+      volumes:
+        - name: rabbitmq-data
+          emptyDir: {} 
 
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: redis
-  name: redis
-  namespace: mybrac-stg
-spec:
-  clusterIP: None
-  clusterIPs:
-    - None
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-    - name: redis
-      port: 6379
-      protocol: TCP
-      targetPort: 6379
-  selector:
-    app: redis
-  sessionAffinity: None
-  type: ClusterIP
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: redis
-    apps.kubernetes.io/pod-index: "0"
-    controller-revision-hash: redis-5b485d685f
-    statefulset.kubernetes.io/pod-name: redis-0
-  name: redis-0
-  namespace: mybrac-stg
-spec:
-  externalTrafficPolicy: Cluster
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-    - nodePort: 31238
-      port: 30001
-      protocol: TCP
-      targetPort: 3000
-  selector:
-    app: redis
-    apps.kubernetes.io/pod-index: "0"
-    controller-revision-hash: redis-5b485d685f
-    statefulset.kubernetes.io/pod-name: redis-0
-  sessionAffinity: None
-  type: NodePort
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  labels:
-    app: redis
-  name: redis-svc
-  namespace: mybrac-stg
-spec:
-  internalTrafficPolicy: Cluster
-  ipFamilies:
-    - IPv4
-  ipFamilyPolicy: SingleStack
-  ports:
-    - name: redis
-      port: 6379
-      protocol: TCP
-      targetPort: 6379
-  selector:
-    app: redis
-  sessionAffinity: None
-  type: ClusterIP
