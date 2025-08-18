@@ -1,0 +1,20 @@
+fastapi:
+  image: "docker.io/jahirraihan/fastapi-redis-rabbitmq-app:latest"
+  replicaCount: 1
+  service:
+    port: 8000
+    targetPort: 8000
+    nodePort: 30080
+
+redis:
+  image: "redis:alpine"
+  storage: "1Gi"
+  servicePort: 6379
+
+rabbitmq:
+  image: "rabbitmq:management"
+  servicePorts:
+    amqp: 5672
+    management: 15672
+  username: "user"
+  password: "password"
