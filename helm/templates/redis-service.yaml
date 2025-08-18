@@ -8,3 +8,4 @@ spec:
     app: redis
   ports:
     - port: {{ .Values.redis.servicePort }}
+      targetPort: {{ .Values.redis.servicePort }}
