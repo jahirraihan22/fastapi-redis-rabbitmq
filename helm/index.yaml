@@ -1,0 +1,34 @@
+apiVersion: v1
+entries:
+  fastapi-redis-rabbitmq:
+  - apiVersion: v2
+    appVersion: 0.1.2
+    created: "2025-08-20T15:37:34.421387321+06:00"
+    description: A Helm chart for FastAPI with Redis and RabbitMQ
+    digest: 5639bfb196f34881ed701a0a8359f43e284c3d3411da107bdfb71d71e3ebadc0
+    name: fastapi-redis-rabbitmq
+    type: application
+    urls:
+    - package/fastapi-redis-rabbitmq-0.1.2.tgz
+    version: 0.1.2
+  - apiVersion: v2
+    appVersion: 0.1.1
+    created: "2025-08-20T15:37:34.4212053+06:00"
+    description: A Helm chart for FastAPI with Redis and RabbitMQ
+    digest: 196d763691461b0c1edbcd99b3f96e0a57fe7e993254735c8a6105df2f7d0898
+    name: fastapi-redis-rabbitmq
+    type: application
+    urls:
+    - package/fastapi-redis-rabbitmq-0.1.1.tgz
+    version: 0.1.1
+  - apiVersion: v2
+    appVersion: "1.0"
+    created: "2025-08-20T15:37:34.421019756+06:00"
+    description: A Helm chart for FastAPI with Redis and RabbitMQ
+    digest: d8ab6607e9662c601345c5226ce67a69937cadfe046bdd022b1d42e630ce7c4a
+    name: fastapi-redis-rabbitmq
+    type: application
+    urls:
+    - package/fastapi-redis-rabbitmq-0.1.0.tgz
+    version: 0.1.0
+generated: "2025-08-20T15:37:34.420770861+06:00"
